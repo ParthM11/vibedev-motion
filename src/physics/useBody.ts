@@ -1,14 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { usePhysics } from './PhysicsProvider';
-import { RigidBodyDesc, ColliderDesc } from '@dimforge/rapier2d';
+import { RigidBodyDesc, ColliderDesc, RigidBody } from '@dimforge/rapier2d';
 
 export const useBody = (options: {
   type?: 'dynamic' | 'fixed' | 'kinematicPositionBased' | 'kinematicVelocityBased';
   position?: { x: number; y: number };
   mass?: number;
+  restitution?: number;
+  friction?: number;
 }) => {
   const { world } = usePhysics();
-  const bodyRef = useRef<any>(null);
+  const bodyRef = useRef<RigidBody | null>(null);
   const [transform, setTransform] = useState({ x: 0, y: 0, rotation: 0 });
 
   useEffect(() => {
@@ -26,7 +28,10 @@ export const useBody = (options: {
     const body = world.createRigidBody(bodyDesc);
     
     // Initial collider (box)
-    const colliderDesc = ColliderDesc.cuboid(0.5, 0.5);
+    const colliderDesc = ColliderDesc.cuboid(0.5, 0.5)
+      .setRestitution(options.restitution ?? 0.5)
+      .setFriction(options.friction ?? 0.5);
+    
     world.createCollider(colliderDesc, body);
 
     bodyRef.current = body;
@@ -41,14 +46,33 @@ export const useBody = (options: {
     if (!bodyRef.current) return;
 
     const sync = () => {
+      if (!bodyRef.current) return;
       const translation = bodyRef.current.translation();
       const rotation = bodyRef.current.rotation();
       setTransform({ x: translation.x, y: translation.y, rotation });
     };
 
-    const interval = setInterval(sync, 16); // ~60fps sync
+    // Use a high-frequency sync for physics-driven UI
+    const interval = setInterval(sync, 16); 
     return () => clearInterval(interval);
   }, [bodyRef.current]);
 
-  return { body: bodyRef.current, transform };
+  const applyImpulse = useCallback((impulse: { x: number; y: number }, wakeUp = true) => {
+    if (bodyRef.current) {
+      bodyRef.current.applyImpulse(impulse, wakeUp);
+    }
+  }, []);
+
+  const setTranslation = useCallback((translation: { x: number; y: number }, wakeUp = true) => {
+    if (bodyRef.current) {
+      bodyRef.current.setTranslation(translation, wakeUp);
+    }
+  }, []);
+
+  return { 
+    body: bodyRef.current, 
+    transform, 
+    applyImpulse, 
+    setTranslation 
+  };
 };
