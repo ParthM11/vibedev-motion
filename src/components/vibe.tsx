@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { useBody } from '../physics/useBody';
 import { useGravityUI } from '../hooks/useGravityUI';
 import { usePhysicalDrag } from '../hooks/usePhysicalDrag';
+import { usePhysicalLayout } from '../hooks/usePhysicalLayout';
+
 
 /**
  * Elements supported by the 'vibe' motion proxy.
@@ -25,25 +27,31 @@ const elements = [
 
 /**
  * VibeMotion: An enhanced motion component that supports any HTML element
- * via the 'as' prop and includes Vibe's physics.
+ * via the 'as' prop and includes Vibe's physics and optimized layout animations.
  */
 export const VibeMotion = React.forwardRef<any, any>(
-  ({ children, physics, as = 'div', physicsExit, drag, dragConstraints, ...props }, ref) => {
+  ({ children, physics, as = 'div', physicsExit, drag, dragConstraints, layout, layoutId, ...props }, ref) => {
     // 1. Interactive Gravity (Mouse Pull)
     const { bind } = useGravityUI();
 
     // 2. Rigid Body Physics (Optional)
     const physicsOptions = useMemo(() => ({
       type: (physics === 'fixed' ? 'fixed' : 'dynamic') as 'fixed' | 'dynamic',
-      enabled: !!physics || !!drag,
-    }), [physics, drag]);
+      enabled: !!physics || !!drag || layout === 'physics',
+    }), [physics, drag, layout]);
 
     const { body, transform } = useBody({
       type: physicsOptions.type,
       enabled: physicsOptions.enabled,
     } as any);
 
-    // 3. Physical Drag (Optional)
+    // 3. Physical Layout Animation (Next-Level FLIP)
+    const { ref: layoutRef, style: layoutStyle } = usePhysicalLayout(body, {
+        layout,
+        layoutId
+    });
+
+    // 4. Physical Drag (Optional)
     const { onDrag, onDragEnd } = usePhysicalDrag(body, {
       enabled: !!drag,
     });
@@ -56,21 +64,40 @@ export const VibeMotion = React.forwardRef<any, any>(
       position: 'absolute' as const,
     } : {};
 
+    // Combine refs
+    const combinedRef = (node: any) => {
+        if (typeof ref === 'function') ref(node);
+        else if (ref) ref.current = node;
+        layoutRef(node);
+    };
+
     // Map the tag to the motion component
     const Component = (motion as any)[as];
+
+    // 5. Automatic Scale Correction
+    // If we are a child, we want to counteract the parent's scale
+    const counterScale = {
+        transform: 'scale(var(--vibe-counter-scale-x, 1), var(--vibe-counter-scale-y, 1))'
+    };
 
     return (
       <Component
         {...(physics === true ? bind : {})}
         {...(drag ? { onDrag, onDragEnd } : {})}
         {...props}
+        layout={layout}
+        layoutId={layoutId}
         style={{
           ...props.style,
           ...physicsStyles,
-        }}
+          ...layoutStyle,
+          '--vibe-parent-x': transform.x,
+          '--vibe-parent-y': transform.y,
+          ...counterScale
+        } as any}
         drag={drag}
         dragConstraints={dragConstraints}
-        ref={ref}
+        ref={combinedRef}
       >
         {children}
       </Component>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeDev Motion | Definitive Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --accent: #00ffcc;
+            --accent-glow: rgba(0, 255, 204, 0.3);
+            --text: #ffffff;
+            --text-dim: #a0a0a0;
+            --surface: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 6rem;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 5rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, #fff 0%, #666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: var(--accent);
+            color: #000;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .hero-desc {
+            font-size: 1.5rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        section {
+            margin-bottom: 8rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h2::before {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 32px;
+            background: var(--accent);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .card p {
+            color: var(--text-dim);
+            font-size: 1rem;
+        }
+
+        pre {
+            background: #000;
+            padding: 2rem;
+            border-radius: 16px;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        code {
+            color: #d1d1d1;
+        }
+
+        .tech-specs {
+            background: linear-gradient(180deg, var(--surface) 0%, transparent 100%);
+            padding: 3rem;
+            border-radius: 32px;
+            border: 1px solid var(--border);
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .spec-label {
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .spec-value {
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem 0;
+            color: var(--text-dim);
+            border-top: 1px solid var(--border);
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .layout-physics-demo {
+            height: 200px;
+            background: #111;
+            border-radius: 20px;
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .layout-physics-demo::after {
+            content: 'PHYSICS SIMULATION ACTIVE';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="animate-in">
+            <span class="badge">Version 1.12.0 stable</span>
+            <h1>VibeDev <span style="color: var(--accent)">Motion</span></h1>
+            <p class="hero-desc">The world's first <span class="highlight">dual-core interaction engine</span>. Seamlessly blending Framer Motion's declarative power with Rapier WASM's high-performance physics simulation.</p>
+        </header>
+
+        <section id="architecture">
+            <h2>The Dual-Core Engine</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Logic Core (WASM)</h3>
+                    <p>Powered by Rapier2D, calculated in a background simulation. Handles rigid-body dynamics, precise collisions, and momentum vectors at 60Hz.</p>
+                </div>
+                <div class="card">
+                    <h3>Visual Core (React)</h3>
+                    <p>Standard Framer Motion primitives. Handles orchestration, accessibility, and the visual state tree of your application.</p>
+                </div>
+                <div class="card">
+                    <h3>Sync-Layer</h3>
+                    <p>The "Vibe Proxy" bridges the two cores, mapping physical translations to React transforms with sub-pixel precision.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="layout-system">
+            <h2>Next-Gen Physics Layout</h2>
+            <p style="margin-bottom: 2rem; color: var(--text-dim);">VibeDev Pro Layout goes beyond standard FLIP transitions. It introduces <span class="highlight">Physical Impulse FLIP</span>.</p>
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>The "Impulse" FLIP</h3>
+                <p>Standard animations use simple mathematical springs. VibeDev converts the layout delta into a physical impulse. If elements move, they have weight. If they collide, they displace each other.</p>
+                <pre><code>&lt;vibe.div 
+  layout="physics" 
+  layoutId="header"
+  restitution={0.8}
+&gt;
+  Physical Header
+&lt;/vibe.div&gt;</code></pre>
+            </div>
+            <div class="grid">
+                <div class="card">
+                    <h3>Shared Momentum</h3>
+                    <p>Using <code>layoutId</code>, physical states are transferred across components. An unmounting component passes its velocity to the new mounting instance.</p>
+                </div>
+                <div class="card">
+                    <h3>Auto Scale Correction</h3>
+                    <p>Powered by CSS Variables (<code>--vibe-counter-scale</code>). Children automatically counteract parent scale distortion without boilerplate props.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="layout-technical">
+            <h2>Layout Animation: API Reference</h2>
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>1. The <code>layout</code> Prop</h3>
+                <p>Controls how the element reacts to layout changes. Supported values:</p>
+                <ul style="margin-left: 2rem; margin-top: 1rem; color: var(--text-dim);">
+                    <li><span class="highlight">true</span>: Standard FLIP animation using high-damping springs.</li>
+                    <li><span class="highlight">"position"</span>: Animates changes in position only, snapping size instantly (perfect for text/images).</li>
+                    <li><span class="highlight">"physics"</span>: Converts the transition into a physical impulse in the Rapier world.</li>
+                </ul>
+                <pre><code>&lt;vibe.div layout="physics"&gt;...&lt;/vibe.div&gt;</code></pre>
+            </div>
+
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>2. <code>layoutId</code> (Shared Transitions)</h3>
+                <p>Connects two elements across different component trees. When element A unmounts and element B mounts with the same ID, B will physically "grow" out of A.</p>
+                <pre><code>{selectedID === item.id && (
+  &lt;vibe.div layoutId="highlight-box" className="outline" /&gt;
+)}</code></pre>
+            </div>
+
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>3. <code>LayoutGroup</code></h3>
+                <p>Synchronizes layout shifts across independent elements. If one element's layout changes and affects its neighbors, wrapping them in <code>LayoutGroup</code> ensures they all animate together physically.</p>
+                <pre><code>import { LayoutGroup } from 'vibedev-motion';
+
+&lt;LayoutGroup&gt;
+  &lt;Accordion /&gt;
+  &lt;Accordion /&gt;
+&lt;/LayoutGroup&gt;</code></pre>
+            </div>
+
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>4. Technical Source (Impulse-FLIP)</h3>
+                <p>How we solve layout deltas using WASM Physics:</p>
+                <pre><code>// Internal Hook Snippet
+const invertX = firstRect.left - lastRect.left;
+const invertY = firstRect.top - lastRect.top;
+
+if (layout === 'physics' && body) {
+  // Convert pixels to physical impulse units
+  const impulse = { x: invertX * 0.1, y: invertY * 0.1 };
+  body.applyImpulse(impulse, true);
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="hooks">
+            <h2>The Hook Ecosystem</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3><code>useGravityUI()</code></h3>
+                    <p>Creates a magnetic field around elements. The cursor acts as a gravitational pull, attracting or repelling UI components based on proximity.</p>
+                </div>
+                <div class="card">
+                    <h3><code>useEnvironmentalLight()</code></h3>
+                    <p>Treats the cursor as a point-light source. Dynamically calculates PERSPECTIVE-BASED shadows for every element on the page.</p>
+                </div>
+                <div class="card">
+                    <h3><code>usePhysicalDrag()</code></h3>
+                    <p>Traditional drag gestures meet real mass. "Flick" a card and watch it bounce off the boundaries of your viewport with real inertia.</p>
+                </div>
+                <div class="card">
+                    <h3><code>useAutoExperience()</code></h3>
+                    <p>A zero-config DOM scanner. Instantly adds physics-driven micro-interactions to every button and link on your page.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="use-cases">
+            <h2>Master Use Cases</h2>
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>The "Digital Surface" Dashboard</h3>
+                <p>Combine <code>useEnvironmentalLight</code> with <code>layout="physics"</code> to create a workspace that feels like a physical desk. Dragging one widget physically "bumps" others out of the way, while shadows stretch and shrink as your cursor moves across the screen.</p>
+            </div>
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>Kinetic Brand Reveal</h3>
+                <p>Use <code>VibeReveal</code> wrapped in <code>LayoutGroup</code> to create high-tension landing pages where sections "snap" into place with Cyber-neon oscillations, reacting to the scroll speed of the page.</p>
+            </div>
+        </section>
+
+        <section class="tech-specs">
+            <h2>Macro-Level Technical Specs</h2>
+            <div class="spec-item">
+                <div class="spec-label">Simulation Engine</div>
+                <div class="spec-value">Rapier2D WASM Core</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-label">Animation Foundation</div>
+                <div class="spec-value">Framer Motion v11+</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-label">Unit Scale</div>
+                <div class="spec-value">1 Sim Unit : 100 Pixels</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-label">Sync Frequency</div>
+                <div class="spec-value">60Hz High-Resolution Loop</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-label">Bundle Weight</div>
+                <div class="spec-value">~15kb (Optimized Core)</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-label">Browser Support</div>
+                <div class="spec-value">Modern (WASM Supported)</div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 VibeDev Motion Engine. Developed by Synthron AI Technologies.</p>
+        </footer>
+    </div>
+</body>
+</html>

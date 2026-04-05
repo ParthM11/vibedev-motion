@@ -17,9 +17,20 @@ export const useBody = (options: {
     if (!world) return;
 
     // Create a rigid body
-    const bodyDesc = options.type === 'fixed' 
-      ? RigidBodyDesc.fixed() 
-      : RigidBodyDesc.dynamic();
+    let bodyDesc;
+    switch (options.type) {
+      case 'fixed':
+        bodyDesc = RigidBodyDesc.fixed();
+        break;
+      case 'kinematicPositionBased':
+        bodyDesc = RigidBodyDesc.kinematicPositionBased();
+        break;
+      case 'kinematicVelocityBased':
+        bodyDesc = RigidBodyDesc.kinematicVelocityBased();
+        break;
+      default:
+        bodyDesc = RigidBodyDesc.dynamic();
+    }
     
     if (options.position) {
       bodyDesc.setTranslation(options.position.x, options.position.y);
