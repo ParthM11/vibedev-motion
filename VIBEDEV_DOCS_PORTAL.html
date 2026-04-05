@@ -274,9 +274,9 @@
 <body>
     <div class="container">
         <header class="animate-in">
-            <span class="badge">Version 1.13.0 stable (Scroll Update)</span>
+            <span class="badge">Version 1.14.0 stable (Transitions Update)</span>
             <h1>VibeDev <span style="color: var(--accent)">Motion</span></h1>
-            <p class="hero-desc">The world's first <span class="highlight">dual-core interaction engine</span>. Now with <span class="highlight">Physical Scroll</span> — where momentum meets metadata.</p>
+            <p class="hero-desc">The world's first <span class="highlight">dual-core interaction engine</span>. Now with <span class="highlight">Physical Transitions</span> — where timing meets topology.</p>
         </header>
 
         <section id="manifesto" class="manifesto-box">
@@ -459,6 +459,47 @@ if (layout === 'physics' && body) {
                     <h3><code>useAutoExperience()</code></h3>
                     <p>A zero-config DOM scanner. Instantly adds physics-driven micro-interactions to every button and link on your page.</p>
                 </div>
+            </div>
+        </section>
+
+        <section id="transitions">
+            <h2>Physical Transitions & Timing</h2>
+            <p style="margin-bottom: 2rem; color: var(--text-dim);">Bridging the gap between <strong>Time-Based Design</strong> and <strong>Force-Based Simulation</strong>. VibeDev converts natural timing parameters into physical oscillator constants.</p>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3><code>visualDuration</code></h3>
+                    <p>The total time (in seconds) the animation takes to visually reach its resting state. The engine solves the differential equations to match this timing exactly.</p>
+                </div>
+                <div class="card">
+                    <h3><code>bounce</code></h3>
+                    <p>Controls the <strong>Damping Ratio</strong>. A value of 0 results in critical damping (no overshoot), while 1 creates an indefinitely oscillating elastic body.</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h3>Advanced Orchestration: <code>stagger</code></h3>
+                <p>Physical sequencing has never been easier. Use the <code>stagger</code> utility to coordinate groups of rigid bodies with sub-millisecond precision.</p>
+                <pre><code>import { vibe, stagger } from 'vibedev-motion';
+
+const transition = {
+  // Stagger from the center in physical space
+  delayChildren: stagger(0.1, { from: 'center' })
+};</code></pre>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h3>Global Configuration</h3>
+                <p>Define application-wide physical defaults in the <code>VibeProvider</code>. Every <code>vibe</code> component will inherit these settings unless overridden locally.</p>
+                <pre><code>&lt;VibeProvider 
+  transition={{ 
+    type: 'spring', 
+    visualDuration: 0.6, 
+    bounce: 0.25 
+  }}
+&gt;
+  &lt;App /&gt;
+&lt;/VibeProvider&gt;</code></pre>
             </div>
         </section>
 

@@ -6,6 +6,8 @@ import { usePhysicalDrag } from '../hooks/usePhysicalDrag';
 import { usePhysicalLayout } from '../hooks/usePhysicalLayout';
 import { useVibeScroll } from '../hooks/useVibeScroll';
 import { useVibeInView } from '../hooks/useVibeInView';
+import { useVibeTheme } from '../context/VibeContext';
+import { calcSpringPhysics } from '../utils/spring';
 
 
 /**
@@ -55,8 +57,17 @@ export const VibeMotion = React.forwardRef<any, any>(
     whileInView, 
     viewport, 
     parallax,
+    transition,
     ...props 
   }, ref) => {
+    const { vibe: themeVibe } = useVibeTheme();
+
+    // 0. Optimized Transition & Spring Solver Mapping
+    const activePhysics = useMemo(() => calcSpringPhysics({
+        ...themeVibe.physics,
+        ...transition,
+    }), [themeVibe.physics, transition]);
+
     // 1. Interactive Gravity (Mouse Pull)
     const { bind } = useGravityUI();
 
@@ -66,15 +77,17 @@ export const VibeMotion = React.forwardRef<any, any>(
       enabled: !!physics || !!drag || layout === 'physics',
     }), [physics, drag, layout]);
 
-    const { body, transform } = useBody({
+    const { body, transform, setTarget, resetVelocity } = useBody({
       type: physicsOptions.type,
       enabled: physicsOptions.enabled,
+      physicsProps: activePhysics
     } as any);
 
     // 3. Physical Layout Animation (Next-Level FLIP)
-    const { ref: layoutRef, style: layoutStyle } = usePhysicalLayout(body, {
+    const { ref: layoutRef, style: layoutStyle } = usePhysicalLayout(body, setTarget, {
         layout,
-        layoutId
+        layoutId,
+        transition
     });
 
     // 4. Physical Drag (Optional)
@@ -82,7 +95,7 @@ export const VibeMotion = React.forwardRef<any, any>(
       enabled: !!drag,
     });
 
-    // 5. Physical Viewport Trigger (NEW)
+    // 5. Physical Viewport Trigger
     const innerRef = useRef<HTMLElement>(null);
     const isInView = useVibeInView(innerRef, {
         ...viewport,
@@ -91,7 +104,7 @@ export const VibeMotion = React.forwardRef<any, any>(
             : (whileInView as any)?.physics === true ? 5 : 0
     });
 
-    // 6. Parallax Integration (NEW)
+    // 6. Parallax Integration
     const { scrollYProgress } = useVibeScroll();
     const parallaxY = useTransform(scrollYProgress, [0, 1], [0, (parallax as any)?.y || 0]);
     const parallaxRotate = useTransform(scrollYProgress, [0, 1], [0, (parallax as any)?.rotate || 0]);
@@ -125,7 +138,7 @@ export const VibeMotion = React.forwardRef<any, any>(
         transform: 'scale(var(--vibe-counter-scale-x, 1), var(--vibe-counter-scale-y, 1))'
     };
 
-    // 8. SVG-Specific Defaults (NEW)
+    // 8. SVG-Specific Defaults
     const isSVG = typeof as === 'string' && [
         'svg', 'circle', 'rect', 'ellipse', 'line', 'polyline', 'polygon', 'path', 'g', 'text'
     ].includes(as);
@@ -144,6 +157,7 @@ export const VibeMotion = React.forwardRef<any, any>(
         viewport={viewport}
         layout={layout}
         layoutId={layoutId}
+        transition={transition}
         style={{
           ...props.style,
           ...physicsStyles,

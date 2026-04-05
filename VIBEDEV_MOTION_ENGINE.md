@@ -103,6 +103,26 @@ To create a state-of-the-art dashboard using the full engine:
 
 ---
 
+## 🎭 The Transition & Timing Engine
+
+VibeDev Motion bridges declarative timing with physical simulation by converting modern spring parameters into oscillator constants.
+
+### 1. Spring Parameter Mapping
+When `visualDuration` and `bounce` are provided, the engine calculates the required `stiffness` and `damping` to match the requested visual profile:
+- **Stiffness ($k$)**: $k = ((2 \pi) / visualDuration)^2 \times mass$
+- **Damping ($c$)**: $c = 2 \times (1 - bounce) \times \sqrt{k \times mass}$
+
+### 2. Physical Target Tracking
+In the `useBody` hook, if a `target` is set (e.g., during a layout shift), the engine applies a corrective force every frame:
+`Force = -stiffness * (currentPos - targetPos) - damping * velocity`
+This creates a "Liquid" effect where elements physically drift and bounce toward their new DOM positions.
+
+### 3. Staggered Orchestration
+The `stagger` utility generates delay functions that can be used with `delayChildren`. It calculates offsets based on the element index and the requested origin (`first`, `last`, `center`).
+- **Use Case**: Sequencing physical entries or layout shifts so they ripple across the UI.
+
+---
+
 ## 🛠️ Internal Physics Specs
 
 - **Gravity**: Default `(0, -9.81)` in simulation units.

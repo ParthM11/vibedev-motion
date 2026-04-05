@@ -1,10 +1,31 @@
 export type VibeType = 'apple' | 'cyber' | 'minimal' | 'glitch';
 
 export interface VibePhysics {
-  stiffness: number;
-  damping: number;
-  mass: number;
+  stiffness?: number;
+  damping?: number;
+  mass?: number;
   restDelta?: number;
+  restSpeed?: number;
+  velocity?: number;
+  visualDuration?: number;
+  bounce?: number;
+}
+
+export type TransitionType = 'spring' | 'tween' | 'inertia';
+
+export interface VibeTransition extends VibePhysics {
+  type?: TransitionType;
+  delay?: number;
+  duration?: number;
+  repeat?: number;
+  repeatType?: 'loop' | 'reverse' | 'mirror';
+  repeatDelay?: number;
+  ease?: string | number[];
+  when?: 'beforeChildren' | 'afterChildren' | false;
+  delayChildren?: number | any;
+  staggerChildren?: number;
+  staggerDirection?: 1 | -1;
+  inherit?: boolean;
 }
 
 export interface VibeTheme {

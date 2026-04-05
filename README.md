@@ -84,6 +84,39 @@ VibeDev uses a predefined physics catalog to create specific emotional responses
 
 ---
 
+## 🎭 Physical Transitions & Orchestration
+
+VibeDev Motion introduces a "Designer-First" approach to physics timing, bridging the gap between time-based animation and force-based simulation.
+
+### Modern Spring API
+Instead of manual stiffness/damping, you can now use natural timing parameters that the engine automatically converts into physical constants.
+
+- **`visualDuration`**: The time (in seconds) the animation takes to visually settle.
+- **`bounce`**: The amount of physical overshoot (0 to 1).
+
+```tsx
+<vibe.div 
+  transition={{ 
+    type: "spring", 
+    visualDuration: 0.5, 
+    bounce: 0.3 
+  }} 
+/>
+```
+
+### Staggered Orchestration
+Coordinate multiple physical entities with ease using the `stagger` utility.
+
+```tsx
+import { vibe, stagger } from 'vibedev-motion';
+
+const transition = {
+  delayChildren: stagger(0.1, { from: 'center' })
+};
+```
+
+---
+
 ## 🛠️ Performance Specs
 
 - **Simulation Frequency**: 60Hz (Synchronized with `requestAnimationFrame`).

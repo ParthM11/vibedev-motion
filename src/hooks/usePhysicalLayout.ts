@@ -1,13 +1,14 @@
-import { useLayoutEffect, useRef, useCallback, useMemo } from 'react';
+import { useLayoutEffect, useRef, useCallback } from 'react';
 import { useSpring } from 'framer-motion';
 import { useVibeTheme } from '../context/VibeContext';
 import { RigidBody } from '@dimforge/rapier2d';
+import { VibeTransition } from '../types';
+import { calcSpringPhysics } from '../utils/spring';
 
-export interface PhysicalLayoutOptions {
+export interface PhysicalLayoutOptions extends VibeTransition {
   layout?: boolean | 'position' | 'physics';
   layoutId?: string;
-  stiffness?: number;
-  damping?: number;
+  transition?: VibeTransition;
 }
 
 /**
@@ -16,16 +17,26 @@ export interface PhysicalLayoutOptions {
  * A next-generation layout animation hook that uses Rapier physics
  * to solve layout transitions via Impulse-FLIP.
  */
-export function usePhysicalLayout(body: RigidBody | null, options: PhysicalLayoutOptions = {}) {
+export function usePhysicalLayout(
+    body: RigidBody | null, 
+    setTarget: (pos: { x: number, y: number }) => void, 
+    options: PhysicalLayoutOptions = {}
+) {
   const { vibe, layoutRegistry, registerLayout } = useVibeTheme();
-  const { layout, layoutId, stiffness, damping } = options;
+  const { layout, layoutId, transition } = options;
   
   const elementRef = useRef<HTMLElement | null>(null);
   const firstRectRef = useRef<DOMRect | null>(null);
 
+  // Merge local transition with theme defaults
+  const activePhysics = calcSpringPhysics({
+      ...vibe.physics,
+      ...transition,
+  });
+
   // Fallback springs for non-physics layout modes
-  const x = useSpring(0, { stiffness: stiffness || vibe.physics.stiffness, damping: damping || vibe.physics.damping });
-  const y = useSpring(0, { stiffness: stiffness || vibe.physics.stiffness, damping: damping || vibe.physics.damping });
+  const x = useSpring(0, activePhysics);
+  const y = useSpring(0, activePhysics);
 
   const snapshot = useCallback(() => {
     if (elementRef.current) {
@@ -59,13 +70,18 @@ export function usePhysicalLayout(body: RigidBody | null, options: PhysicalLayou
 
     if (invertX !== 0 || invertY !== 0) {
       if (layout === 'physics' && body) {
-        // NEXT-LEVEL: Apply physical impulse instead of just a transform
-        // Convert pixels to simulation units (1 unit = 100px)
-        const impulse = {
-            x: invertX * 0.1, 
-            y: invertY * 0.1
-        };
-        body.applyImpulse(impulse, true);
+          // Physical FLIP: Set initial simulation position and target
+          // This allows the body to 'drift' back to its new DOM position physically
+          const currentSimPos = body.translation();
+          // We apply the invert to the body's translation immediately 
+          // so it's physically where it 'was' visually.
+          body.setTranslation({ 
+              x: currentSimPos.x + (invertX * 0.01), 
+              y: currentSimPos.y + (invertY * 0.01) 
+          }, true);
+          
+          // The target is the current simulation baseline (rest position)
+          setTarget({ x: currentSimPos.x, y: currentSimPos.y });
       } else {
         // Standard FLIP via springs
         x.set(invertX);
