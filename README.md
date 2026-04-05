@@ -4,7 +4,7 @@
 > *Bridging the gap between declarative UI orchestration and high-performance rigid-body dynamics.*
 
 [![Version](https://img.shields.io/npm/v/vibedev-motion?color=7e22ce&style=flat-square)](https://www.npmjs.com/package/vibedev-motion)
-[![License](https://img.shields.io/github/license/vibedev-motion/vibedev-motion?style=flat-square)](https://github.com/vibedev-motion/vibedev-motion/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/ParthM11/vibedev-motion?style=flat-square)](https://github.com/ParthM11/vibedev-motion/blob/main/LICENSE)
 
 VibeDev Motion isn't just an animation library; it's a **Kinetic UI Operating System**. By running a parallel, WASM-driven physics simulation alongside the React render cycle, it transforms static layouts into tactile, momentum-aware entities.
 

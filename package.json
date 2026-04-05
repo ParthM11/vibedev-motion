@@ -25,6 +25,14 @@
   ],
   "author": "Synthron AI Technologies <reloadedmachine@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ParthM11/vibedev-motion.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ParthM11/vibedev-motion/issues"
+  },
+  "homepage": "https://vibedev.synthron.in/",
   "dependencies": {
     "framer-motion": "^11.0.0",
     "@dimforge/rapier2d": "^0.11.2"
