@@ -1,9 +1,11 @@
-import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo, useRef } from 'react';
+import { motion, useTransform } from 'framer-motion';
 import { useBody } from '../physics/useBody';
 import { useGravityUI } from '../hooks/useGravityUI';
 import { usePhysicalDrag } from '../hooks/usePhysicalDrag';
 import { usePhysicalLayout } from '../hooks/usePhysicalLayout';
+import { useVibeScroll } from '../hooks/useVibeScroll';
+import { useVibeInView } from '../hooks/useVibeInView';
 
 
 /**
@@ -30,7 +32,20 @@ const elements = [
  * via the 'as' prop and includes Vibe's physics and optimized layout animations.
  */
 export const VibeMotion = React.forwardRef<any, any>(
-  ({ children, physics, as = 'div', physicsExit, drag, dragConstraints, layout, layoutId, ...props }, ref) => {
+  ({ 
+    children, 
+    physics, 
+    as = 'div', 
+    physicsExit, 
+    drag, 
+    dragConstraints, 
+    layout, 
+    layoutId, 
+    whileInView, 
+    viewport, 
+    parallax,
+    ...props 
+  }, ref) => {
     // 1. Interactive Gravity (Mouse Pull)
     const { bind } = useGravityUI();
 
@@ -56,6 +71,20 @@ export const VibeMotion = React.forwardRef<any, any>(
       enabled: !!drag,
     });
 
+    // 5. Physical Viewport Trigger (NEW)
+    const innerRef = useRef<HTMLElement>(null);
+    const isInView = useVibeInView(innerRef, {
+        ...viewport,
+        physicsImpulse: typeof (whileInView as any)?.physics === 'number' 
+            ? (whileInView as any).physics 
+            : (whileInView as any)?.physics === true ? 5 : 0
+    });
+
+    // 6. Parallax Integration (NEW)
+    const { scrollYProgress } = useVibeScroll();
+    const parallaxY = useTransform(scrollYProgress, [0, 1], [0, (parallax as any)?.y || 0]);
+    const parallaxRotate = useTransform(scrollYProgress, [0, 1], [0, (parallax as any)?.rotate || 0]);
+
     // Toggle physics-driven styles vs Framer Motion styles
     const physicsStyles = physicsOptions.enabled ? {
       x: transform.x,
@@ -64,18 +93,23 @@ export const VibeMotion = React.forwardRef<any, any>(
       position: 'absolute' as const,
     } : {};
 
+    const parallaxStyles = (parallax as any) ? {
+        y: parallaxY,
+        rotate: parallaxRotate,
+    } : {};
+
     // Combine refs
     const combinedRef = (node: any) => {
         if (typeof ref === 'function') ref(node);
         else if (ref) ref.current = node;
+        (innerRef as any).current = node;
         layoutRef(node);
     };
 
     // Map the tag to the motion component
     const Component = (motion as any)[as];
 
-    // 5. Automatic Scale Correction
-    // If we are a child, we want to counteract the parent's scale
+    // 7. Automatic Scale Correction
     const counterScale = {
         transform: 'scale(var(--vibe-counter-scale-x, 1), var(--vibe-counter-scale-y, 1))'
     };
@@ -85,11 +119,14 @@ export const VibeMotion = React.forwardRef<any, any>(
         {...(physics === true ? bind : {})}
         {...(drag ? { onDrag, onDragEnd } : {})}
         {...props}
+        whileInView={whileInView}
+        viewport={viewport}
         layout={layout}
         layoutId={layoutId}
         style={{
           ...props.style,
           ...physicsStyles,
+          ...parallaxStyles,
           ...layoutStyle,
           '--vibe-parent-x': transform.x,
           '--vibe-parent-y': transform.y,

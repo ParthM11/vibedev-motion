@@ -211,15 +211,94 @@
             letter-spacing: 2px;
             opacity: 0.3;
         }
+
+        .scroll-demo-rail {
+            height: 100px;
+            width: 100%;
+            background: var(--surface);
+            border-radius: 12px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .scroll-demo-item {
+            width: 60px;
+            height: 60px;
+            background: var(--accent);
+            border-radius: 8px;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .manifesto-box {
+            background: linear-gradient(90deg, rgba(0, 255, 204, 0.1) 0%, transparent 100%);
+            border-left: 4px solid var(--accent);
+            padding: 3rem;
+            margin: 6rem 0;
+            border-radius: 0 32px 32px 0;
+        }
+
+        .manifesto-box h2 {
+            border: none;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .manifesto-box h2::before { display: none; }
+
+        .manifesto-text {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
+
+        .uniqueness-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-top: 3rem;
+        }
+
+        .u-vs {
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin: 2rem 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="animate-in">
-            <span class="badge">Version 1.12.0 stable</span>
+            <span class="badge">Version 1.13.0 stable (Scroll Update)</span>
             <h1>VibeDev <span style="color: var(--accent)">Motion</span></h1>
-            <p class="hero-desc">The world's first <span class="highlight">dual-core interaction engine</span>. Seamlessly blending Framer Motion's declarative power with Rapier WASM's high-performance physics simulation.</p>
+            <p class="hero-desc">The world's first <span class="highlight">dual-core interaction engine</span>. Now with <span class="highlight">Physical Scroll</span> — where momentum meets metadata.</p>
         </header>
+
+        <section id="manifesto" class="manifesto-box">
+            <h2>Why VibeDev is Unique in the World</h2>
+            <div class="manifesto-text">
+                <p>After a deep analysis of the global animation landscape—from Framer Motion's declarative elegance to GSAP's imperative precision—we discovered a missing dimension: <span class="highlight">Tactile Reality</span>.</p>
+                <p style="margin-top: 1rem;">The world doesn't need another "Animation Library." It needs an **Interaction Physics Engine**. VibeDev Motion is unique because it abandons the concept of "Moving from A to B" and replaces it with "Simulating Existence."</p>
+                
+                <div class="uniqueness-grid">
+                    <div>
+                        <h3 style="color: #fff; margin-bottom: 1rem;">The Legacy Web (Animated)</h3>
+                        <p>Standard libraries use <strong>Mathematical Interpolation</strong>. Elements move along a pre-calculated curve. They are ghosts—they pass through each other, they have no weight, and they ignore the laws of the universe.</p>
+                    </div>
+                    <div>
+                        <h3 style="color: var(--accent); margin-bottom: 1rem;">The VibeDev Web (Physical)</h3>
+                        <p>We use <strong>WASM-Native Rigid Body Dynamics</strong>. Every element is a physical object with Mass, Friction, and Restitution. When you scroll, you aren't just moving pixels—you are generating <strong>Kinetic Energy</strong>.</p>
+                    </div>
+                </div>
+
+                <div class="u-vs">The Dual-Core Differentiator</div>
+                <p>VibeDev is the only engine in existence that runs a <strong>Parallel Physics Simulation (Rapier WASM)</strong> alongside the React Render Cycle. This allows for "Impulse-FLIP"—where a layout change doesn't just animate, it <em>explodes</em> or <em>settles</em> based on momentum transferred across mounting states.</p>
+            </div>
+        </section>
 
         <section id="architecture">
             <h2>The Dual-Core Engine</h2>
@@ -309,6 +388,54 @@ if (layout === 'physics' && body) {
   const impulse = { x: invertX * 0.1, y: invertY * 0.1 };
   body.applyImpulse(impulse, true);
 }</code></pre>
+            </div>
+        </section>
+
+        <section id="scroll-experience">
+            <h2>Physical Scroll Experiences</h2>
+            <p style="margin-bottom: 2rem; color: var(--text-dim);">Traditional scroll is linear. VibeDev Scroll is <span class="highlight">Momentum-Aware</span>. We map scroll velocity directly into the physical world.</p>
+            
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>1. <code>VibeProgress</code> (Momentum Bar)</h3>
+                <p>Not just a progress bar. It uses spring physics to create a weighty, liquid-like filling effect as you scroll.</p>
+                <pre><code>import { VibeProgress } from 'vibedev-motion';
+                
+&lt;VibeProgress color="#00ffcc" height={4} smoothing={true} /&gt;</code></pre>
+            </div>
+
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>2. Physical Parallax (3D Depth)</h3>
+                <p>Use the <code>parallax</code> prop on any <code>vibe</code> component. It automatically calculates vertical offset and rotation based on scroll progress, creating an illusion of depth.</p>
+                <pre><code>&lt;vibe.img 
+  src="/art.jpg" 
+  parallax={{ y: -100, rotate: 5 }} 
+/&gt;</code></pre>
+            </div>
+
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>3. Scroll-Linked Impulse</h3>
+                <p>The <code>ScrollPhysics</code> component turns the entire page into a physical reactor. Every scroll "blast" pushes dynamic bodies in the direction of the scroll.</p>
+                <pre><code>&lt;ScrollPhysics intensity={2.5} forceType="impulse" /&gt;</code></pre>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3><code>whileInView</code> (Physical Entry)</h3>
+                    <p>When an element enters the viewport, it can trigger a physical 'pop'. This gives your landing pages a tactile, "popping" feel.</p>
+                    <pre><code>&lt;vibe.div 
+  whileInView={{ opacity: 1, physics: 5 }}
+&gt;
+  I popped in!
+&lt;/vibe.div&gt;</code></pre>
+                </div>
+                <div class="card">
+                    <h3>Horizontal Rail</h3>
+                    <p>Easily convert vertical scroll distance into a physical horizontal conveyor belt using <code>VibeHorizontalScroll</code>.</p>
+                    <pre><code>&lt;VibeHorizontalScroll intensity={1.5}&gt;
+  &lt;Card /&gt;
+  &lt;Card /&gt;
+&lt;/VibeHorizontalScroll&gt;</code></pre>
+                </div>
             </div>
         </section>
 
