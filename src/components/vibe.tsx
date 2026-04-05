@@ -24,7 +24,18 @@ const elements = [
   'ruby', 's', 'samp', 'script', 'section', 'select', 'small', 'source',
   'span', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody',
   'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title',
-  'tr', 'track', 'u', 'ul', 'var', 'video', 'wbr'
+  'tr', 'track', 'u', 'ul', 'var', 'video', 'wbr',
+  // SVG Elements
+  'svg', 'animate', 'animateMotion', 'animateTransform', 'circle', 'clipPath',
+  'defs', 'desc', 'ellipse', 'feBlend', 'feColorMatrix', 'feComponentTransfer',
+  'feComposite', 'feConvolveMatrix', 'feDiffuseLighting', 'feDisplacementMap',
+  'feDistantLight', 'feDropShadow', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG',
+  'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode', 'feMorphology',
+  'feOffset', 'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile',
+  'feTurbulence', 'filter', 'foreignObject', 'g', 'image', 'line', 'linearGradient',
+  'marker', 'mask', 'metadata', 'mpath', 'path', 'pattern', 'polygon', 'polyline',
+  'radialGradient', 'rect', 'set', 'stop', 'switch', 'symbol', 'text', 'textPath',
+  'tspan', 'use', 'view'
 ] as const;
 
 /**
@@ -114,6 +125,16 @@ export const VibeMotion = React.forwardRef<any, any>(
         transform: 'scale(var(--vibe-counter-scale-x, 1), var(--vibe-counter-scale-y, 1))'
     };
 
+    // 8. SVG-Specific Defaults (NEW)
+    const isSVG = typeof as === 'string' && [
+        'svg', 'circle', 'rect', 'ellipse', 'line', 'polyline', 'polygon', 'path', 'g', 'text'
+    ].includes(as);
+    
+    const svgStyles = isSVG ? {
+        transformBox: 'fill-box' as any,
+        transformOrigin: 'center'
+    } : {};
+
     return (
       <Component
         {...(physics === true ? bind : {})}
@@ -127,6 +148,7 @@ export const VibeMotion = React.forwardRef<any, any>(
           ...props.style,
           ...physicsStyles,
           ...parallaxStyles,
+          ...svgStyles,
           ...layoutStyle,
           '--vibe-parent-x': transform.x,
           '--vibe-parent-y': transform.y,

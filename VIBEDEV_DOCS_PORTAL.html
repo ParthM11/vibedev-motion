@@ -50,6 +50,7 @@
             letter-spacing: -2px;
             background: linear-gradient(135deg, #fff 0%, #666 100%);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
         }
@@ -457,6 +458,51 @@ if (layout === 'physics' && body) {
                 <div class="card">
                     <h3><code>useAutoExperience()</code></h3>
                     <p>A zero-config DOM scanner. Instantly adds physics-driven micro-interactions to every button and link on your page.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="svg-experience">
+            <h2>Physical SVG Animations</h2>
+            <p style="margin-bottom: 2rem; color: var(--text-dim);">SVGs in VibeDev aren't just shapes. They are <span class="highlight">Elastic Entities</span>. We bring joint-physics and material-reactivity to the vector world.</p>
+            
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>1. <code>VibePath</code> (Elastic Drawing)</h3>
+                <p>Standard line drawing is boring. <code>VibePath</code> adds momentum to the <code>pathLength</code>. When a line is drawn, it "snaps" and "jiggles" into place like a real wire.</p>
+                <pre><code>&lt;VibePath 
+  d="M10 80 C 40 10, 65 10, 95 80" 
+  initial={{ pathLength: 0 }}
+  animate={{ pathLength: 1 }}
+  elastic={true}
+/&gt;</code></pre>
+            </div>
+
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>2. <code>VibeChain</code> (Rope Physics)</h3>
+                <p>The crown jewel of VibeDev SVG. It converts any path into a series of physical segments connected by revolute joints. It reacts to gravity, cursor pulls, and scrolling.</p>
+                <pre><code>&lt;VibeChain 
+  path="M 0 0 L 100 100" 
+  segmentCount={20} 
+  physics={true} 
+/&gt;</code></pre>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>Direct Attribute Physics</h3>
+                    <p>Animate <code>cx</code>, <code>cy</code>, and <code>r</code> with the same physics engine used for DIVs. No more "robotic" SVG transitions.</p>
+                    <pre><code>&lt;vibe.circle 
+  animate={{ r: [10, 50, 10] }} 
+  physics="dynamic" 
+/&gt;</code></pre>
+                </div>
+                <div class="card">
+                    <h3>Reactive Optics</h3>
+                    <p>SVG Filters that react to your movement. <code>VibeFilter.Turbulence</code> links its frequency to your scroll velocity.</p>
+                    <pre><code>&lt;VibeFilter.Turbulence 
+  id="liquid-refraction" 
+  reactivity={0.01} 
+/&gt;</code></pre>
                 </div>
             </div>
         </section>
